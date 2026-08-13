@@ -37,9 +37,9 @@ jobs:
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region "${{ env.AWS_REGION }}"
 
-      # # 4. Install Terraform
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v3
+      # 4. Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
       # 5. cd into the folder and run terraform commands
       - name: Terraform Init
