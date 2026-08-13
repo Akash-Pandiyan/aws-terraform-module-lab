@@ -37,7 +37,7 @@ resource "aws_route_table" "public_rt" {
 
 
 resource "aws_route_table_association" "rt_associate" {
-  for_each = { for k, v in var.subnets : k => v if v.public }
+  for_each = { for k, v in var.subnets : k => v if k.true }
   subnet_id      = aws_subnet.mysubnets[each.key].id
   route_table_id = aws_route_table.public_rt.id
 }
