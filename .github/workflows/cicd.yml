@@ -1,0 +1,56 @@
+name: Terraform AWS Deploy
+
+on:
+  workflow_dispatch:      # manual trigger — change to push/pull_request if you want it automatic
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1              # change to your region
+  TF_DIR: terraform     # change to the folder terraform files live in
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clone the repository
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        run : aws --version
+
+      # 2. Install AWS CLI
+      #    Note: ubuntu-latest runners actually ship with AWS CLI pre-installed.
+      #    This step force-reinstalls the latest version explicitly, as requested.
+      # - name: Install AWS CLI
+      #   run: |
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #     unzip -q awscliv2.zip
+      #     sudo ./aws/install --update
+      #     aws --version
+
+      # 3. Configure AWS credentials from GitHub Secrets
+      #    Set these in: repo Settings -> Secrets and variables -> Actions
+      #    Secrets needed: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          aws configure set region "${{ env.AWS_REGION }}"
+
+      # # 4. Install Terraform
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v3
+
+      # 5. cd into the folder and run terraform commands
+      - name: Terraform Init
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform apply -auto-approve
