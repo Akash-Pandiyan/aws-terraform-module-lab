@@ -17,7 +17,6 @@ jobs:
       # 1. Clone the repository
       - name: Checkout repo
         uses: actions/checkout@v4
-        run : aws --version
 
       # 2. Install AWS CLI
       #    Note: ubuntu-latest runners actually ship with AWS CLI pre-installed.
