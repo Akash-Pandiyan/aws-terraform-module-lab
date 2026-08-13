@@ -6,6 +6,7 @@ variable "subnets" {
   type = map(object({
     cidr = string
     az = string
+    public = bool
   }))
   default = {
     "public-1" = {
